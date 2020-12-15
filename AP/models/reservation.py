@@ -14,8 +14,8 @@ class Reservation(db.Model):
     __tablename__ = 'reservation'
 
     id = db.Column(db.Integer, primary_key=True)
-    reservor = db.Column(db.Integer(), db.ForeignKey("user.id"))
+    reservor = db.Column(db.Integer())
     datetime = db.Column(db.DateTime(), nullable=False)
     created_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now(), onupdate=db.func.now())
-    workspace = db.Column(db.Integer(), db.ForeignKey("workspace.id"))
+    workspace = db.Column(db.Integer())

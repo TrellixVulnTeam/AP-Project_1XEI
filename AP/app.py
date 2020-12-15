@@ -1,3 +1,5 @@
+#! /usr/bin/python3.8
+
 from flask import Flask
 from flask_migrate import Migrate
 from flask_restful import Api
@@ -7,6 +9,7 @@ from extensions import db
 from models.user import User
 from resources.reservation import ReservationListResource, ReservationResource
 from resources.workspace import WorkspaceListResource, WorkspaceResource
+from resources.user import UserListResource
 
 
 def create_app():
@@ -27,6 +30,7 @@ def register_extensions(app):
 def register_resources(app):
     api = Api(app)
 
+    api.add_resource(UserListResource, '/users')
     api.add_resource(ReservationListResource, '/reservations')
     api.add_resource(ReservationResource, '/reservations/<int:reservation_id>')
     api.add_resource(WorkspaceListResource, '/workspaces')

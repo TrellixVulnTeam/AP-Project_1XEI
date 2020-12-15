@@ -43,6 +43,7 @@ class WorkspaceResource(Resource):
         if workspace is None:
             return {'message': 'Workspace not found'}, HTTPStatus.NOT_FOUND
 
+        workspace.id = data['id']
         workspace.name = data['name']
 
         return workspace.data, HTTPStatus.OK
