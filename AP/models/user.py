@@ -13,7 +13,6 @@ class User(db.Model):
     created_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now(), onupdate=db.func.now())
 
-
     @classmethod
     def get_by_username(cls, username):
         return cls.query.filter_by(username=username).first()
@@ -25,3 +24,7 @@ class User(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    @classmethod
+    def get_by_id(cls, id):
+        return cls.query.filter_by(id=id).first()
