@@ -84,3 +84,13 @@ class MeResource(Resource):
         }
 
         return data, HTTPStatus.OK
+
+
+class Test(Resource):
+    def get(self):
+
+        data = {
+            'shit': 'works'
+        }
+
+        return data, HTTPStatus.OK
