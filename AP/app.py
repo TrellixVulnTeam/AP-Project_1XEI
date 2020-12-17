@@ -141,6 +141,12 @@ def register_resources(app):
     def registrationform():
         return render_template('registrationform.html')
 
+    @app.route('/editReservation/<int:id>/', methods=['GET'])
+    @jwt_required
+    def editReservation(id):
+        workspaces = Workspace.query.all()
+        return render_template('editReservation.html', workspaces=workspaces, id=id)
+
     @app.route('/token', methods=['POST'])
     def token():
         return redirect(url_for('index'))

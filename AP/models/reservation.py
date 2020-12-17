@@ -34,6 +34,10 @@ class Reservation(db.Model):
         newid = id.split("}")[0]
         return cls.query.filter_by(id=newid).first()
 
+    @classmethod
+    def get_by_id2(cls, id):
+        return cls.query.filter_by(id=id).first()
+
     def delete(self):
         db.session.delete(self)
         db.session.commit()

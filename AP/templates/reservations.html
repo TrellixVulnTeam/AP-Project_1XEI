@@ -40,6 +40,7 @@
                   <h2>Reservation at {{reservation.datetime}}</h2>
                   <h4>Workspace {{reservation.name}}</h4>
                     <button class="button button2" onclick="deleteReservation(this.parentNode.id)">Delete</button>
+                  <a class="active" href="{{ url_for('editReservation', id=reservation.id)}}">Edit</a>
               </div>
           </li>
           {% endfor %}

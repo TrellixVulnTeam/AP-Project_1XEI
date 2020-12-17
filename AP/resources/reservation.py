@@ -11,6 +11,34 @@ import json
 
 class ReservationListResource(Resource):
 
+    def put(self):
+
+        data = request.form
+        data2 = json.dumps(data)
+        data3 = json.loads(data2)
+
+
+
+
+        date = data3["datetime"]
+        workspace = data3["workspace"]
+        timeend = data3["timeend"]
+        timestart = data3["timestart"]
+        id = data3['id']
+        reservation = Reservation.get_by_id2(id)
+        reservation.reservor = data3["name"] or reservation.reservor
+
+        reservation.workspace = Workspace.get_by_name(workspace).id or reservation.workspace
+
+        reservation.datetime = str(date) + "T" + timestart or reservation.datetime
+        reservation.datetimeend = str(date) + "T" + timeend or reservation.datetimeend
+
+        reservation.save()
+
+        resp = make_response(redirect(url_for('hello')))
+        return resp
+
+
     def get(self):
         data = []
 
@@ -41,38 +69,23 @@ class ReservationListResource(Resource):
         news = timestart.split(":")[0]
         newe = timeend.split(":")[0]
         check = False
-        reservations = Reservation.query.all()
-        for reservation in reservations:
-            dts = reservation.datetime
-            dt = str(dts)
-            if dt.split[0] == str(date):
-                dte = reservation.datetimeend
-                dt2 = dt.split("T")[1]
-                dt3 = dt2.split(":")[0]
-                dte2 = dte.split("T")[1]
-                dte3 = dte2.split(":")[0]
 
-                if not news > dt3 and not news < dte3:
-                    if not timestart.split(":")[1] > dt2.split(":")[1] and not timestart.split(":")[1] > dte2.split(":")[1]:
-                        check = True
+        if news < "13" or newe > "21":
+            resp = make_response(redirect(url_for('hello')))
+            return resp
+        else:
 
-        if not check:
-            if news < "13" or newe > "21":
-                resp = make_response(redirect(url_for('hello')))
-                return resp
-            else:
+            resp = make_response(redirect(url_for('hello')))
 
-                resp = make_response(redirect(url_for('hello')))
+            reservation = Reservation(
+                reservor=userid,
+                datetime=datetime,
+                datetimeend=datetimeend,
+                workspace=workspaceid
+            )
 
-                reservation = Reservation(
-                    reservor=userid,
-                    datetime=datetime,
-                    datetimeend=datetimeend,
-                    workspace=workspaceid
-                )
-
-                reservation.save()
-                return resp
+            reservation.save()
+            return resp
 
     def delete(self):
         data = request.args.get('jsdata')

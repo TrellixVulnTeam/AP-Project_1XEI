@@ -1,5 +1,15 @@
-      <form action="/reservations" method="post" enctype="application/json">
-                <select id="workspace2" name="workspace">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf8">
+    <link rel="stylesheet" href="{{ url_for('static',  filename= 'css/style.css')}}">
+    <title>User Dashboard</title>
+</head>
+<body>
+      <h1>Edit a Reservation:</h1>
+      <h2>Only times between 4pm-9pm are allowed. Please add time in Hours:Minutes:Seconds format. Ex. 16:30:00</h2>
+      <form action="/reservations" method="put" enctype="application/json">
+                <select id="workspace" name="workspace">
                     {% for workspace in workspaces %}
                     <option value="{{workspace.name}}">{{workspace.name}}</option>
                     {% endfor %}
@@ -8,5 +18,9 @@
                 <input type="text" placeholder="Start Time" name="timestart" value="{{request.form.timestart}}">
                 <input type="text" placeholder="End Time" name="timeend" value="{{request.form.timeend}}">
                 <input type="text" placeholder="Reservor Username" name="name" value="{{request.form.name}}">
-          <input class="btn btn-default" type="submit" value="Reserve">
+
+                <input type="hidden" name="id" value="{{id}}">
+          <input  class="button button2" type="submit" value="Reserve">
       </form>
+</body>
+</html>

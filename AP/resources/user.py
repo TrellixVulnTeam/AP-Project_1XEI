@@ -41,6 +41,18 @@ class UserListResource(Resource):
         resp = make_response(redirect(url_for('logginIn')))
         return resp
 
+    def put(self, id):
+        data = request.get_json()
+
+        user = User.get_by_id(id)
+
+        user.username = data['username']
+        user.name = data['name']
+        user.email = data['email']
+        user.password = user.password
+
+        user.save()
+
 
 class User2Resource(Resource):
     def post(self):
