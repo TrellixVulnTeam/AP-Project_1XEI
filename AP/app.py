@@ -160,6 +160,20 @@ def register_resources(app):
 
         return render_template('reservationscheck.html', checklist=check_list)
 
+    @app.route('/admin',  methods=['GET'])
+    @jwt_required
+    def admin():
+        workspaces = Workspace.query.all()
+        reservations = Reservation.query.all()
+        reser = []
+        for reservation in reservations:
+            ids = reservation.workspace
+            a = Workspace.get_by_id(ids)
+            reservation.name = a.name
+            reser.append(reservation)
+        clients = User.query.all()
+        return render_template('admin.html', reservations=reservations, workspaces=workspaces, clients=clients)
+
 if __name__ == '__main__':
     app = create_app()
     app.run()

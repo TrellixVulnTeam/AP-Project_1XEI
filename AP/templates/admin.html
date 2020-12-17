@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf8">
+    <link rel="stylesheet" href="{{ url_for('static',  filename= 'css/style.css')}}">
+    <title>User Dashboard</title>
+</head>
+<body>
+<div class="topnav">
+  <a href="{{ url_for('dashboard')}}">Dashboard</a>
+  <a href="{{ url_for('hello')}}">Reservations</a>
+  <a class="active" href="{{ url_for('admin')}}">Admin Panel</a>
+</div>
+<div id="wrapper">
+  <div id="left">
+      <h1>All Workspaces:</h1>
+      <form action="/workspaces" method="post" enctype="application/json">
+                <input type="text" placeholder="Workspace name" name="name" value="{{request.form.name}}">
+          <input class="btn btn-default" type="submit" value="Add workspace">
+      </form>
+      <ul>
+          {% for workspace in workspaces %}
+          <li>
+              <div id="{{workspace.id}}">
+                  <h3>{{workspace.name}} </h3>
+              </div>
+          </li>
+          {% endfor %}
+      </ul>
+      <div id="available times"></div>
+  </div>
+  <div id="right">
+      <h1>All Reservations:</h1>
+      <ul>
+          {% for reservation in reservations %}
+          <li>
+              <div id="reserv">
+                  <h2>Reservation at {{reservation.datetime}}</h2>
+                  <h4>Workspace {{reservation.name}}</h4>
+
+              </div>
+          </li>
+          {% endfor %}
+      </ul>
+
+
+  </div>
+    <div id="center">
+        <h1>All Clients:</h1>
+      <ul>
+          {% for client in clients %}
+          <li>
+              <div id="{{ client.id }}">
+                  <h2>User {{client.username}}</h2>
+                  <h4>{{client.name}}</h4>
+                  <h4>{{client.email}}</h4>
+
+              </div>
+          </li>
+          {% endfor %}
+      </ul>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+    $("#del").click(function(){
+    console.log("bruh")
+        var id = $("this").parentNode.id;
+        $.ajax({
+            url: "/check",
+            type: "get",
+            data: {jsdata: id},
+            success: function(response){
+                $("#availabletimes").html(response);
+            },
+            error: function(xhr){
+            }
+        });
+    });
+</script>
+</body>
+</html>

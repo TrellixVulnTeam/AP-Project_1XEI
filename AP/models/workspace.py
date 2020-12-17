@@ -33,3 +33,7 @@ class Workspace(db.Model):
     @classmethod
     def get_all(cls):
         return cls.query.all()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()

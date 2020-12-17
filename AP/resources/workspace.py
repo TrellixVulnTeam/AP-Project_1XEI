@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, make_response, url_for,  redirect, render_template
 from flask_restful import Resource
 from http import HTTPStatus
 
@@ -18,20 +18,31 @@ class WorkspaceListResource(Resource):
         return {'data': data}, HTTPStatus.OK
 
     def post(self):
-        data = request.get_json()
+        data = request.form
+        data2 = json.dumps(data)
+        data3 = json.loads(data2)
 
-        name = data.get('name')
+        name = data3.get('name')
 
         workspace = Workspace (
             name=name
         )
         workspace.save()
 
-        data = {
-            'name':  workspace.name
-        }
+        resp = make_response(redirect(url_for('admin')))
 
-        return data, HTTPStatus.CREATED
+        return resp
+
+    def delete(self):
+        data = request.args.get('jsdata')
+
+        workspace = Workspace.get_by_id(data)
+
+        workspace.delete()
+
+        return render_template('deleted.html')
+
+
 
 
 

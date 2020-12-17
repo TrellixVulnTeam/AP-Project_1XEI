@@ -33,13 +33,20 @@
 }
 
 #left {
-  flex: 0 0 65%;
+  float: left;
+  width: 30%;
 }
 
 #right {
-  flex: 1;
+  float: right;
+  width:  30%
 }
 
 ul {
     list-style-type: none;
+}
+
+#center  {
+    margin: 0 auto;
+    width: 30%;
 }
