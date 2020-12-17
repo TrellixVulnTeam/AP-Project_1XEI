@@ -1,8 +1,10 @@
-from flask import request
+from flask import request, jsonify
 from flask_restful import Resource
 from http import HTTPStatus
 
+import json
 from models.workspace import Workspace, workspace_list
+from flask_marshmallow import Marshmallow
 
 
 class WorkspaceListResource(Resource):
@@ -18,22 +20,32 @@ class WorkspaceListResource(Resource):
     def post(self):
         data = request.get_json()
 
-        workspace = Workspace(name=data['name'])
+        name = data.get('name')
 
-        workspace_list.append(workspace)
+        workspace = Workspace (
+            name=name
+        )
+        workspace.save()
 
-        return workspace.data, HTTPStatus.CREATED
+        data = {
+            'name':  workspace.name
+        }
+
+        return data, HTTPStatus.CREATED
+
 
 
 class WorkspaceResource(Resource):
 
-    def get(self, workspace_id):
-        workspace = next((workspace for workspace in workspace_list if workspace.id == workspace_id), None)
+    def get(self, name):
 
-        if workspace is None:
-            return {'message': 'Workspace not found'}, HTTPStatus.NOT_FOUND
+        workspace = Workspace.get_by_name(name=name)
 
-        return workspace.data, HTTPStatus.OK
+        data = {
+            'name': workspace.name
+        }
+
+        return data, HTTPStatus.OK
 
     def put(self, workspace_id):
         data = request.get_json()
@@ -57,3 +69,14 @@ class WorkspaceResource(Resource):
         workspace_list.remove(workspace)
 
         return {}, HTTPStatus.NO_CONTENT
+
+
+class AllWorkspaces(Resource):
+
+    def get(self):
+
+        data = Workspace.get_all()
+
+        print(data)
+
+        return data

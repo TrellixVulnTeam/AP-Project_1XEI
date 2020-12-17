@@ -1,9 +1,13 @@
-from flask import request
+from flask import request, make_response, url_for, redirect
 from flask_restful import Resource
 from http import HTTPStatus
+from flask_jwt_extended import get_jwt_identity,jwt_required, get_current_user, jwt_optional
 
 from models.reservation import Reservation, reservation_list
+from models.user import User
+from models.workspace import Workspace
 
+import json
 
 class ReservationListResource(Resource):
 
@@ -16,15 +20,41 @@ class ReservationListResource(Resource):
         return {'data': data}, HTTPStatus.OK
 
     def post(self):
-        data = request.get_json()
 
-        reservation = Reservation(reservor=data['reservor'],
-                                  datetime=data['datetime'],
-                                  workspace=data['workspace'])
+        data = request.form
+        data2 = json.dumps(data)
+        data3 = json.loads(data2)
+        date = data3["datetime"]
+        workspace = data3["workspace"]
+        timeend = data3["timeend"]
+        timestart = data3["timestart"]
+        user = data3["name"]
 
-        reservation_list.append(reservation)
+        workspaceid = Workspace.get_by_name(workspace).id
 
-        return reservation.data, HTTPStatus.CREATED
+        datetime = str(date) + "T" + timestart
+        datetimeend = str(date) + "T" + timeend
+        userid = User.get_by_username(user).id
+
+        news = timestart.split(":")[0]
+        newe = timeend.split(":")[0]
+
+        if news < "13" or newe > "21":
+            resp = make_response(redirect(url_for('hello')))
+            return resp
+        else:
+
+            resp = make_response(redirect(url_for('hello')))
+
+            reservation = Reservation(
+                reservor=userid,
+                datetime=datetime,
+                datetimeend=datetimeend,
+                workspace=workspaceid
+            )
+
+            reservation.save()
+            return resp
 
 
 class ReservationResource(Resource):
@@ -47,6 +77,7 @@ class ReservationResource(Resource):
 
         reservation.reservor = data['reservor']
         reservation.datetime = data['datetime']
+        reservation.datetimeend = data['datetimeend']
         reservation.workspace = data['workspace']
 
         return reservation.data, HTTPStatus.OK

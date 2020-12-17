@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf8">
+    <link rel="stylesheet" href="{{ url_for('static',  filename= 'css/style.css')}}">
+    <title>User Dashboard</title>
+</head>
+<body>
+<div class="topnav">
+  <a href="{{ url_for('dashboard')}}">Dashboard</a>
+  <a class="active" href="{{ url_for('hello')}}">Reservations</a>
+  <a href="#contact">Contact</a>
+  <a href="#about">About</a>
+</div>
+<div id="wrapper">
+  <div id="left">
+      <h1>Create a Reservation:</h1>
+      <h2>Only times between 4pm-9pm are allowed. Please add time in Hours:Minutes:Seconds format. Ex. 16:30:00</h2>
+      <form action="/reservations" method="post" enctype="application/json">
+                <select id="workspace" name="workspace">
+                    {% for workspace in workspaces %}
+                    <option value="{{workspace.name}}">{{workspace.name}}</option>
+                    {% endfor %}
+                    </select>
+                <input id="datet" type="date" name="datetime" value="{{request.form.datetime}}">
+                <input type="text" placeholder="Start Time" name="timestart" value="{{request.form.timestart}}">
+                <input type="text" placeholder="End Time" name="timeend" value="{{request.form.timeend}}">
+                <input type="text" placeholder="Reservor Username" name="name" value="{{request.form.name}}">
+          <input class="btn btn-default" type="submit" value="Login">
+      </form>
+      <button id="check">Check Date</button>
+      <h3>Already Reserved Times:</h3>
+      <div id="availabletimes"></div>
+  </div>
+  <div id="right">
+      <h1>Current Reservations:</h1>
+      <ul>
+          {% for reservation in reservations %}
+          <li>
+              <div id="reserv">
+                  <h2>Reservation at {{reservation.datetime}}</h2>
+                  <h4>Workspace {{reservation.name}}</h4>
+
+              </div>
+          </li>
+          {% endfor %}
+      </ul>
+
+
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+    $("#check").click(function(){
+        var date = $("#datet").val();
+        var work = $("#workspace option:selected").text()
+        console.log(date)
+        console.log(work)
+        $.ajax({
+            url: "/check",
+            type: "get",
+            data: {jsdata: date, space: work},
+            success: function(response){
+                $("#availabletimes").html(response);
+            },
+            error: function(xhr){
+            }
+        });
+    });
+</script>
+</body>
+</html>

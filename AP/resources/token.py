@@ -21,10 +21,10 @@ class TokenResource(Resource):
         if not user or not check_password(password, user.password):
             return {'message': 'Email or password is incorrect'}, HTTPStatus.UNAUTHORIZED
 
-        access_token = create_access_token(identity=user.id)
-        refresh_token = create_refresh_token(identity=user.id)
+        access_token = create_access_token(identity=user.username)
+        refresh_token = create_refresh_token(identity=user.username)
 
-        resp = make_response(redirect(url_for('hello')))
+        resp = make_response(redirect(url_for('dashboard')))
         set_access_cookies(resp, access_token)
         set_refresh_cookies(resp, refresh_token)
         return resp
