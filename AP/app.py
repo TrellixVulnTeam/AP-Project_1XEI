@@ -13,7 +13,7 @@ from extensions import db, jwt
 from models.user import User
 from resources.reservation import ReservationListResource, ReservationResource
 from resources.workspace import WorkspaceListResource, WorkspaceResource, AllWorkspaces
-from resources.user import UserListResource, UserResource, MeResource, Test
+from resources.user import UserListResource, UserResource, MeResource, Test, User2Resource
 from resources.token import TokenResource
 from resources.refresh import TokenRefreshResource
 from flask_marshmallow import Marshmallow
@@ -45,6 +45,7 @@ def register_resources(app):
     api = Api(app)
 
     api.add_resource(UserListResource, '/users')
+    api.add_resource(User2Resource, '/users2')
     api.add_resource(Test, '/Test')
     api.add_resource(UserResource, '/users/<string:username>')
     api.add_resource(MeResource, '/me')
@@ -71,6 +72,11 @@ def register_resources(app):
 
         return render_template('login.html')
 
+    @app.route('/register', methods=['GET', 'POST'])
+    def register():
+
+        return render_template('register.html')
+
     @app.route('/hello',  methods=['GET'])
     @jwt_required
     def hello():
@@ -80,10 +86,13 @@ def register_resources(app):
         reservations = Reservation.query.filter_by(reservor=userid).all()
         reser = []
         for reservation in reservations:
-            ids = reservation.workspace
-            a = Workspace.get_by_id(ids)
-            reservation.name = a.name
-            reser.append(reservation)
+            try:
+                ids = reservation.workspace
+                a = Workspace.get_by_id(ids)
+                reservation.name = a.name
+                reser.append(reservation)
+            except:
+                print("rip")
         return render_template('reservations.html', reservations=reservations, workspaces=workspaces)
 
     @app.route('/reserve',  methods=['POST'])
@@ -127,6 +136,11 @@ def register_resources(app):
     def dashboard():
         return render_template('dashboard.html')
 
+    @app.route('/registrationform', methods=['GET'])
+    @jwt_required
+    def registrationform():
+        return render_template('registrationform.html')
+
     @app.route('/token', methods=['POST'])
     def token():
         return redirect(url_for('index'))
@@ -163,17 +177,52 @@ def register_resources(app):
     @app.route('/admin',  methods=['GET'])
     @jwt_required
     def admin():
-        workspaces = Workspace.query.all()
-        reservations = Reservation.query.all()
-        reser = []
-        for reservation in reservations:
-            ids = reservation.workspace
-            a = Workspace.get_by_id(ids)
-            reservation.name = a.name
-            reser.append(reservation)
-        clients = User.query.all()
-        return render_template('admin.html', reservations=reservations, workspaces=workspaces, clients=clients)
+        username = get_jwt_identity()
+        user = User.get_by_username(username)
+        if user.is_admin:
+            workspaces = Workspace.query.all()
+            reservations = Reservation.query.all()
+            reser = []
+            for reservation in reservations:
+                try:
+                    ids = reservation.workspace
+                    a = Workspace.get_by_id(ids)
+                    reservation.name = a.name
+                    reser.append(reservation)
+                except:
+                    print("rip")
+            clients = User.query.all()
+            return render_template('admin.html', reservations=reservations, workspaces=workspaces, clients=clients)
+        else:
+            return render_template('notadmin.html')
 
+    @app.route('/deleteworkspace', methods=['GET'])
+    def deleteworkspace():
+        data = request.args.get('jsdata')
+        workspace = Workspace.get_by_id(data)
+
+        workspace.delete()
+
+        return render_template('deleted.html')
+
+    @app.route('/deletereservation', methods=['GET'])
+    def deletereservation():
+        data = request.args.get('jsdata')
+        reservation = Reservation.get_by_id(data)
+        print(data)
+
+        reservation.delete()
+
+        return render_template('deleted.html')
+
+    @app.route('/deleteuser', methods=['GET'])
+    def deleteuser():
+        data = request.args.get('jsdata')
+        user = User.get_by_id(data)
+
+        user.delete()
+
+        return render_template('deleted.html')
 if __name__ == '__main__':
     app = create_app()
     app.run()

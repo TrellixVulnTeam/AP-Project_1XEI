@@ -22,6 +22,10 @@ class Workspace(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
     @classmethod
     def get_by_name(cls, name):
         return cls.query.filter_by(name=name).first()
@@ -34,6 +38,3 @@ class Workspace(db.Model):
     def get_all(cls):
         return cls.query.all()
 
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()

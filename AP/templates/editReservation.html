@@ -1,0 +1,12 @@
+      <form action="/reservations" method="post" enctype="application/json">
+                <select id="workspace2" name="workspace">
+                    {% for workspace in workspaces %}
+                    <option value="{{workspace.name}}">{{workspace.name}}</option>
+                    {% endfor %}
+                    </select>
+                <input id="datet" type="date" name="datetime" value="{{request.form.datetime}}">
+                <input type="text" placeholder="Start Time" name="timestart" value="{{request.form.timestart}}">
+                <input type="text" placeholder="End Time" name="timeend" value="{{request.form.timeend}}">
+                <input type="text" placeholder="Reservor Username" name="name" value="{{request.form.name}}">
+          <input class="btn btn-default" type="submit" value="Reserve">
+      </form>

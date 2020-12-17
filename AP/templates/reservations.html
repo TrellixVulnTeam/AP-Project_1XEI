@@ -12,7 +12,7 @@
   <a href="{{ url_for('admin')}}">Admin Panel</a>
 </div>
 <div id="wrapper">
-  <div id="left">
+  <div id="left" style="background-color: lightgrey; margin-top:40px; width: auto;">
       <h1>Create a Reservation:</h1>
       <h2>Only times between 4pm-9pm are allowed. Please add time in Hours:Minutes:Seconds format. Ex. 16:30:00</h2>
       <form action="/reservations" method="post" enctype="application/json">
@@ -25,21 +25,21 @@
                 <input type="text" placeholder="Start Time" name="timestart" value="{{request.form.timestart}}">
                 <input type="text" placeholder="End Time" name="timeend" value="{{request.form.timeend}}">
                 <input type="text" placeholder="Reservor Username" name="name" value="{{request.form.name}}">
-          <input class="btn btn-default" type="submit" value="Login">
+          <input  class="button button2" type="submit" value="Reserve">
       </form>
       <button id="check">Check Date</button>
       <h3>Already Reserved Times:</h3>
       <div id="availabletimes"></div>
   </div>
-  <div id="right">
+  <div id="right" style="background-color: lightgrey; margin-top:40px; width: auto;">
       <h1>Current Reservations:</h1>
       <ul>
           {% for reservation in reservations %}
           <li>
-              <div id="reserv">
+              <div id="{{ reservation.id }}}">
                   <h2>Reservation at {{reservation.datetime}}</h2>
                   <h4>Workspace {{reservation.name}}</h4>
-
+                    <button class="button button2" onclick="deleteReservation(this.parentNode.id)">Delete</button>
               </div>
           </li>
           {% endfor %}
@@ -66,6 +66,23 @@
             }
         });
     });
+
+    function deleteReservation(id) {
+    setid = id
+    console.log(id)
+        $.ajax({
+            url: "/deletereservation",
+            type: "get",
+            data: {jsdata: setid},
+            success: function(response){
+                $("#availabletimes").html(response);
+            },
+            error: function(xhr){
+            }
+        });
+    }
+
+
 </script>
 </body>
 </html>

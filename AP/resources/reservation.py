@@ -1,4 +1,4 @@
-from flask import request, make_response, url_for, redirect
+from flask import request, make_response, url_for, redirect, render_template
 from flask_restful import Resource
 from http import HTTPStatus
 from flask_jwt_extended import get_jwt_identity,jwt_required, get_current_user, jwt_optional
@@ -21,9 +21,11 @@ class ReservationListResource(Resource):
 
     def post(self):
 
+
         data = request.form
         data2 = json.dumps(data)
         data3 = json.loads(data2)
+
         date = data3["datetime"]
         workspace = data3["workspace"]
         timeend = data3["timeend"]
@@ -38,23 +40,47 @@ class ReservationListResource(Resource):
 
         news = timestart.split(":")[0]
         newe = timeend.split(":")[0]
+        check = False
+        reservations = Reservation.query.all()
+        for reservation in reservations:
+            dts = reservation.datetime
+            dt = str(dts)
+            if dt.split[0] == str(date):
+                dte = reservation.datetimeend
+                dt2 = dt.split("T")[1]
+                dt3 = dt2.split(":")[0]
+                dte2 = dte.split("T")[1]
+                dte3 = dte2.split(":")[0]
 
-        if news < "13" or newe > "21":
-            resp = make_response(redirect(url_for('hello')))
-            return resp
-        else:
+                if not news > dt3 and not news < dte3:
+                    if not timestart.split(":")[1] > dt2.split(":")[1] and not timestart.split(":")[1] > dte2.split(":")[1]:
+                        check = True
 
-            resp = make_response(redirect(url_for('hello')))
+        if not check:
+            if news < "13" or newe > "21":
+                resp = make_response(redirect(url_for('hello')))
+                return resp
+            else:
 
-            reservation = Reservation(
-                reservor=userid,
-                datetime=datetime,
-                datetimeend=datetimeend,
-                workspace=workspaceid
-            )
+                resp = make_response(redirect(url_for('hello')))
 
-            reservation.save()
-            return resp
+                reservation = Reservation(
+                    reservor=userid,
+                    datetime=datetime,
+                    datetimeend=datetimeend,
+                    workspace=workspaceid
+                )
+
+                reservation.save()
+                return resp
+
+    def delete(self):
+        data = request.args.get('jsdata')
+        reservation = Reservation.get_by_id(data)
+
+        reservation.delete()
+
+        return render_template('deleted.html')
 
 
 class ReservationResource(Resource):

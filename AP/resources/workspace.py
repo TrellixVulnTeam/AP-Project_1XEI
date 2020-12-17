@@ -1,4 +1,4 @@
-from flask import request, jsonify, make_response, url_for,  redirect, render_template
+from flask import request, jsonify, make_response, url_for, redirect, render_template
 from flask_restful import Resource
 from http import HTTPStatus
 
@@ -24,26 +24,35 @@ class WorkspaceListResource(Resource):
 
         name = data3.get('name')
 
-        workspace = Workspace (
-            name=name
-        )
-        workspace.save()
+        workspaces = Workspace.get_all()
+        check = False
 
-        resp = make_response(redirect(url_for('admin')))
+        for workspace in workspaces:
+            if workspace.name == name:
+                check = True
 
-        return resp
+        if not check:
+            workspace = Workspace(
+                name=name
+            )
+            workspace.save()
+
+            resp = make_response(redirect(url_for('admin')))
+
+            return resp
+        else:
+            resp = make_response(redirect(url_for('admin')))
+
+            return resp
 
     def delete(self):
         data = request.args.get('jsdata')
-
+        print(data)
         workspace = Workspace.get_by_id(data)
 
         workspace.delete()
 
         return render_template('deleted.html')
-
-
-
 
 
 class WorkspaceResource(Resource):
@@ -85,7 +94,6 @@ class WorkspaceResource(Resource):
 class AllWorkspaces(Resource):
 
     def get(self):
-
         data = Workspace.get_all()
 
         print(data)

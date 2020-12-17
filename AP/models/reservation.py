@@ -28,3 +28,12 @@ class Reservation(db.Model):
     @classmethod
     def get_by_reservor(cls, reservor):
         return cls.query.filter_by(reservor=reservor).first()
+
+    @classmethod
+    def get_by_id(cls, id):
+        newid = id.split("}")[0]
+        return cls.query.filter_by(id=newid).first()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
