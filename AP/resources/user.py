@@ -19,20 +19,13 @@ class UserListResource(Resource):
         data2 = json.dumps(data)
         data3 = json.loads(data2)
 
-        schemadata = user_schema.load(data=data3)
+        data, errors = user_schema.load(data=data3)
 
-        username = data3['username']
-        name = data3['name']
-        email = data3['email']
-        non_hash_pass = data3['password']
-
-        if User.get_by_username(username):
+        if User.get_by_username(data.get('username')):
             return {'message':  'Username already exists'}, HTTPStatus.BAD_REQUEST
 
-        if User.get_by_email(email):
+        if User.get_by_email(data.get('email')):
             return {'message': 'Email already used'}, HTTPStatus.BAD_REQUEST
-
-        password = hash_password(non_hash_pass)
 
         user = User(**data)
 

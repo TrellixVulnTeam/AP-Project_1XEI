@@ -6,8 +6,12 @@ from flask_jwt_extended import get_jwt_identity,jwt_required, get_current_user, 
 from models.reservation import Reservation, reservation_list
 from models.user import User
 from models.workspace import Workspace
+from schemas.reservation import ReservationSchema
 
 import json
+
+reservation_schema = ReservationSchema()
+
 
 class ReservationListResource(Resource):
 
@@ -47,43 +51,38 @@ class ReservationListResource(Resource):
 
         return {'data': data}, HTTPStatus.OK
 
-    def post(self):
 
+    def post(self):
 
         data = request.form
         data2 = json.dumps(data)
         data3 = json.loads(data2)
 
-        date = data3["datetime"]
-        workspace = data3["workspace"]
-        timeend = data3["timeend"]
-        timestart = data3["timestart"]
-        user = data3["name"]
+        user = data3['user']
+        data, errors = reservation_schema.load(data=data3)
+        if errors:
+            return  {'message': "Validation errors", 'errors': errors}, HTTPStatus.BAD_REQUEST
 
-        workspaceid = Workspace.get_by_name(workspace).id
+        date = data3["datetime"]
+        timeend = data3["endtime"]
+        timestart = data3["starttime"]
 
         datetime = str(date) + "T" + timestart
         datetimeend = str(date) + "T" + timeend
-        userid = User.get_by_username(user).id
 
         news = timestart.split(":")[0]
         newe = timeend.split(":")[0]
-        check = False
 
-        if news < "13" or newe > "21":
-            resp = make_response(redirect(url_for('hello')))
-            return resp
+        if news < "16" or newe > "21":
+            return {'message': "Time bust be between 4pm and 9pm."}
         else:
 
             resp = make_response(redirect(url_for('hello')))
 
-            reservation = Reservation(
-                reservor=userid,
-                datetime=datetime,
-                datetimeend=datetimeend,
-                workspace=workspaceid
-            )
-
+            reservation = Reservation(**data)
+            reservation.datetime = datetime
+            reservation.datetimeend = datetimeend
+            reservation.reservor = user
             reservation.save()
             return resp
 

@@ -22,7 +22,6 @@ from models.reservation import Reservation
 from models.user import User
 
 
-
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -80,9 +79,11 @@ def register_resources(app):
     @app.route('/hello',  methods=['GET'])
     @jwt_required
     def hello():
+        users = []
         workspaces= Workspace.query.all()
         user = get_jwt_identity()
         userid = User.get_by_username(user).id
+        users.append(userid)
         reservations = Reservation.query.filter_by(reservor=userid).all()
         reser = []
         for reservation in reservations:
@@ -93,43 +94,8 @@ def register_resources(app):
                 reser.append(reservation)
             except:
                 print("rip")
-        return render_template('reservations.html', reservations=reservations, workspaces=workspaces)
-
-    @app.route('/reserve',  methods=['POST'])
-    @jwt_required
-    def reserve():
-        data = request.form
-        data2 = json.dumps(data)
-        data3 = json.loads(data2)
-        date = data3["datetime"]
-        workspace = data3["workspace"]
-        timeend = data3["timeend"]
-        timestart = data3["timestart"]
-
-        news = timestart.split(":")[0]
-        newe = timeend.split(":")[0]
-        print(news)
-        if news < "13" or newe > "21":
-            resp = make_response(redirect(url_for('hello')))
-            return resp
-        else:
-            datetime = str(date) + "T" + timestart
-            datetimeend = str(date) + "T" + timeend
-            user = get_jwt_identity()
-            print(user)
-            userid = User.get_by_username(user).id
-
-            resp = make_response(redirect(url_for('hello')))
-
-            reservation = Reservation(
-                reservor=userid,
-                datetime=datetime,
-                datetimeend=datetimeend,
-                workspace=workspace
-            )
-
-            reservation.save()
-            return resp
+        resp = make_response(render_template('reservations.html', reservations=reservations, workspaces=workspaces, users=users ))
+        return resp
 
     @app.route('/dashboard', methods=['GET'])
     @jwt_required
@@ -189,10 +155,14 @@ def register_resources(app):
             workspaces = Workspace.query.all()
             reservations = Reservation.query.all()
             reser = []
+            i = 0
             for reservation in reservations:
                 try:
                     ids = reservation.workspace
+                    ids2 = reservation.reservor
                     a = Workspace.get_by_id(ids)
+                    b = User.get_by_id(ids2)
+                    reservation.correct_user = b.name
                     reservation.name = a.name
                     reser.append(reservation)
                 except:

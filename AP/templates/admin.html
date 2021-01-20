@@ -12,17 +12,18 @@
   <a class="active" href="{{ url_for('admin')}}">Admin Panel</a>
 </div>
 <div id="wrapper">
-  <div id="left" style="background-color: lightgrey; margin-top:40px;">
+  <div id="left" style="background-color: lightgrey; margin-top:40px; padding: 15px;">
       <h1>All Workspaces:</h1>
       <form action="/workspaces" method="post" enctype="application/json">
                 <input type="text" placeholder="Workspace name" name="name" value="{{request.form.name}}">
+                <input type="text" placeholder="Number of people" name="size" value="{{request.form.size}}">
           <input  class="button button2" type="submit" value="Add workspace">
       </form>
       <ul>
           {% for workspace in workspaces %}
           <li>
               <div id="{{workspace.id}}">
-                  <h3>{{workspace.name}} </h3>
+                  <h3>{{workspace.name}} ({{workspace.size}} people) </h3>
                   <button class="button button2" onclick="deleteWorkspace(this.parentNode.id)">Delete</button>
               </div>
           </li>
@@ -30,14 +31,15 @@
       </ul>
       <div id="availabletimes"></div>
   </div>
-  <div id="right" style="background-color: lightgrey; margin-top:40px;">
+  <div id="right" style="background-color: lightgrey; margin-top:40px; padding: 15px;">
       <h1>All Reservations:</h1>
       <ul>
           {% for reservation in reservations %}
           <li>
               <div id="{{ reservation.id }}}">
-                  <h2>Reservation at {{reservation.datetime}}</h2>
-                  <h4>Workspace {{reservation.name}}</h4>
+                  <h2>Reservation at: {{reservation.datetime}}</h2>
+                  <h4>Workspace: {{reservation.name}}</h4>
+                  <h4>Reservor: {{reservation.correct_user}}</h4>
 <button  class="button button2" onclick="editReservation(this.parentNode.id)">Edit</button>
                   <button class="button button2" onclick="deleteReservation(this.parentNode.id)">Delete</button>
               </div>
@@ -48,16 +50,16 @@
 
 
   </div>
-    <div id="center" style="background-color: lightgrey; margin-top:40px;">
+    <div id="center" style="background-color: lightgrey; margin-top:40px; padding: 15px;">
         <h1>All Clients:</h1>
         <a href="{{ url_for('registrationform')}}"  class="button button2">Create User</a>
       <ul>
           {% for client in clients %}
           <li>
               <div id="{{ client.id }}">
-                  <h2>User {{client.username}}</h2>
-                  <h4>{{client.name}}</h4>
-                  <h4>{{client.email}}</h4>
+                  <h2>User: {{client.username}}</h2>
+                  <h4>Name: {{client.name}}</h4>
+                  <h4>Email: {{client.email}}</h4>
                     <button class="button button2" onclick="editUser({{ client.id }}, {{ client.username }}, {{ client.name }}, {{ client.email }})">Edit</button>
                   <button class="button button2" onclick="deleteUser({{client.id}})">Delete</button>
               </div>

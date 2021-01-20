@@ -12,33 +12,36 @@
   <a href="{{ url_for('admin')}}">Admin Panel</a>
 </div>
 <div id="wrapper">
-  <div id="left" style="background-color: lightgrey; margin-top:40px; width: auto;">
+  <div id="left" style="background-color: lightgrey; margin-top:40px; width: auto; padding: 15px;">
       <h1>Create a Reservation:</h1>
       <h2>Only times between 4pm-9pm are allowed. Please add time in Hours:Minutes:Seconds format. Ex. 16:30:00</h2>
       <form action="/reservations" method="post" enctype="application/json">
                 <select id="workspace" name="workspace">
                     {% for workspace in workspaces %}
-                    <option value="{{workspace.name}}">{{workspace.name}}</option>
+                    <option value="{{workspace.name}}">{{workspace.name}} ({{workspace.size}} People)</option>
                     {% endfor %}
                     </select>
+                    {% for user in users %}
+                <input type="hidden" name="user" value="{{ user }}">
+                    {% endfor %}
                 <input id="datet" type="date" name="datetime" value="{{request.form.datetime}}">
-                <input type="text" placeholder="Start Time" name="timestart" value="{{request.form.timestart}}">
-                <input type="text" placeholder="End Time" name="timeend" value="{{request.form.timeend}}">
-                <input type="text" placeholder="Reservor Username" name="name" value="{{request.form.name}}">
+                <input type="text" placeholder="Start Time" name="starttime" value="{{request.form.starttime}}">
+                <input type="text" placeholder="End Time" name="endtime" value="{{request.form.endtime}}">
           <input  class="button button2" type="submit" value="Reserve">
       </form>
       <button id="check">Check Date</button>
       <h3>Already Reserved Times:</h3>
       <div id="availabletimes"></div>
   </div>
-  <div id="right" style="background-color: lightgrey; margin-top:40px; width: auto;">
+  <div id="right" style="background-color: lightgrey; margin-top:40px; width: auto; padding: 15px;">
       <h1>Current Reservations:</h1>
       <ul>
           {% for reservation in reservations %}
           <li>
               <div id="{{ reservation.id }}}">
-                  <h2>Reservation at {{reservation.datetime}}</h2>
-                  <h4>Workspace {{reservation.name}}</h4>
+                  <h3>Reservation from: {{reservation.datetime}}</h3>
+                  <h3>Reservation To: {{reservation.datetimeend}}</h3>
+                  <h4>Workspace: {{reservation.name}}</h4>
                     <button class="button button2" onclick="deleteReservation(this.parentNode.id)">Delete</button>
                   <a class="active" href="{{ url_for('editReservation', id=reservation.id)}}">Edit</a>
               </div>

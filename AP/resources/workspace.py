@@ -23,6 +23,7 @@ class WorkspaceListResource(Resource):
         data3 = json.loads(data2)
 
         name = data3.get('name')
+        people = data3.get('people')
 
         workspaces = Workspace.get_all()
         check = False
@@ -33,7 +34,8 @@ class WorkspaceListResource(Resource):
 
         if not check:
             workspace = Workspace(
-                name=name
+                name=name,
+                size=people
             )
             workspace.save()
 
