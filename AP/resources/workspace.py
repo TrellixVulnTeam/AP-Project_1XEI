@@ -62,7 +62,8 @@ class WorkspaceResource(Resource):
         workspace = Workspace.get_by_name(name=name)
 
         data = {
-            'name': workspace.name
+            'name': workspace.name,
+            'size': workspace.size
         }
 
         return data, HTTPStatus.OK
@@ -77,6 +78,7 @@ class WorkspaceResource(Resource):
 
         workspace.id = data['id']
         workspace.name = data['name']
+        workspace.size = data['size']
 
         return workspace.data, HTTPStatus.OK
 

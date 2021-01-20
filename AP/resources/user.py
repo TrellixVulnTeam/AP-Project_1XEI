@@ -6,15 +6,20 @@ from utils import hash_password
 from models.user import User
 
 from flask_jwt_extended import jwt_optional, get_jwt_identity, jwt_required
+from schemas.user import UserSchema
 
 import json
 
+user_schema = UserSchema()
+user_public_schema = UserSchema(exclude=('email', ))
 
 class UserListResource(Resource):
     def post(self):
         data = request.form
         data2 = json.dumps(data)
         data3 = json.loads(data2)
+
+        schemadata = user_schema.load(data=data3)
 
         username = data3['username']
         name = data3['name']
@@ -29,12 +34,7 @@ class UserListResource(Resource):
 
         password = hash_password(non_hash_pass)
 
-        user = User(
-            username=username,
-            name=name,
-            email=email,
-            password=password
-        )
+        user = User(**data)
 
         user.save()
 
@@ -97,17 +97,9 @@ class UserResource(Resource):
         current_user = get_jwt_identity()
 
         if current_user == user.id:
-            data =  {
-                'id': user.id,
-                'username': user.username,
-                'email':   user.email
-            }
-
+            data = user_schema.dump(user).data
         else:
-            data = {
-                'id': user.id,
-                'username': user.username
-            }
+            data = user_public_schema.dump(user).data
 
         return data, HTTPStatus.OK
 
@@ -119,13 +111,7 @@ class MeResource(Resource):
 
         user = User.get_by_id(id=get_jwt_identity())
 
-        data = {
-            'id': user.id,
-            'username': user.username,
-            'email': user.email
-        }
-
-        return data, HTTPStatus.OK
+        return user_schema.dump(user).data, HTTPStatus.OK
 
 
 class Test(Resource):

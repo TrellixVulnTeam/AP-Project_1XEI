@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 5586aff98e1f
+Revision ID: 342a9b27bf96
 Revises: 
-Create Date: 2020-12-15 17:38:53.178972
+Create Date: 2021-01-20 20:08:41.432102
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5586aff98e1f'
+revision = '342a9b27bf96'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,6 +22,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('reservor', sa.Integer(), nullable=True),
     sa.Column('datetime', sa.DateTime(), nullable=False),
+    sa.Column('datetimeend', sa.DateTime(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('workspace', sa.Integer(), nullable=True),
@@ -43,6 +44,7 @@ def upgrade():
     op.create_table('workspace',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=True),
+    sa.Column('size', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id')
