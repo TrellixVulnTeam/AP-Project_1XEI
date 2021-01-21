@@ -24,12 +24,11 @@
                     {% for user in users %}
                 <input type="hidden" name="user" value="{{ user }}">
                     {% endfor %}
-                <input id="datet" type="date" name="datetime" value="{{request.form.datetime}}">
+                <input id="datet" type="date" name="datetime" value="{{request.form.datetime}}" onchange="checkDate()">
                 <input type="text" placeholder="Start Time" name="starttime" value="{{request.form.starttime}}">
                 <input type="text" placeholder="End Time" name="endtime" value="{{request.form.endtime}}">
           <input  class="button button2" type="submit" value="Reserve">
       </form>
-      <button id="check">Check Date</button>
       <h3>Already Reserved Times:</h3>
       <div id="availabletimes"></div>
   </div>
@@ -54,8 +53,11 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
-    $("#check").click(function(){
-        var date = $("#datet").val();
+
+    var date = document.getElementById("datet");
+
+    function checkDate() {
+    var date = $("#datet").val();
         var work = $("#workspace option:selected").text()
         console.log(date)
         console.log(work)
@@ -69,7 +71,7 @@
             error: function(xhr){
             }
         });
-    });
+    };
 
     function deleteReservation(id) {
     setid = id

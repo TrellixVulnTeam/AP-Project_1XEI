@@ -129,9 +129,10 @@ def register_resources(app):
     def check():
         data = request.args.get('jsdata')
         space = request.args.get('space')
+        space = space.split(" ")
         check_list = []
         reservations = Reservation.query.all()
-        spaceid = Workspace.get_by_name(space).id
+        spaceid = Workspace.get_by_name(space[0]).id
         print(spaceid)
         for reservation in reservations:
             if spaceid == reservation.workspace:

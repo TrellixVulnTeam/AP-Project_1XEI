@@ -21,9 +21,6 @@ class ReservationListResource(Resource):
         data2 = json.dumps(data)
         data3 = json.loads(data2)
 
-
-
-
         date = data3["datetime"]
         workspace = data3["workspace"]
         timeend = data3["timeend"]
